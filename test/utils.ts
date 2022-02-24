@@ -86,6 +86,9 @@ export const ENS_REGISTRY_ABI = [
     'event NewTTL(bytes32 indexed node, uint64 ttl)',
     'event ApprovalForAll(address indexed owner, address indexed operator, bool approved)',
     'function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) external',
+    'function ttl(bytes32 node) public view returns (uint64)',
+    'function resolver(bytes32 node) public view returns (address)',
+    'function recordExists(bytes32 node) public view returns (bool)'
 ];
 
 export const ENS_PUBLIC_RESOLVER_ABI = [

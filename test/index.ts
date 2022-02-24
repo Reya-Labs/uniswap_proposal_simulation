@@ -11,9 +11,8 @@ import "hardhat";
 
 const { provider } = waffle;
 
-describe("Uni proposal simulation", async () => {
+describe("Voltz / Uniswap additional use grant simulation", async () => {
   let wallet: Wallet, other: Wallet;
-
 
   async function advanceBlockHeight(blocks:number) {
     const txns = [];
@@ -76,7 +75,14 @@ describe("Uni proposal simulation", async () => {
     
     const ensPublicResolver = new Contract(PUBLIC_ENS_RESOLVER_ADDRESS, ENS_PUBLIC_RESOLVER_ABI, provider);
     let licenseText = await ensPublicResolver.text(NODE, KEY)
+
+    const ensRegistry = new Contract(ENS_REGISTRY_ADDRESS, ENS_REGISTRY_ABI, provider);
+    let subnodeResolver = await ensRegistry.resolver(NODE);
+    let subnodeRecordExists = await ensRegistry.recordExists(NODE);
+    console.log("subnodeResolver", subnodeResolver);
+    expect(subnodeResolver).to.eq("0x0000000000000000000000000000000000000000");
     expect(licenseText).to.eq("");
+    expect(subnodeRecordExists).to.eq(false);
     
     const a16zAddress = "0x2B1Ad6184a6B0fac06bD225ed37C2AbC04415fF4"
     // delegate votes from whales to the wallet
@@ -110,7 +116,6 @@ describe("Uni proposal simulation", async () => {
     let currentProposalCount = await governorBravo.proposalCount(); // expect 10
     console.log("currentProposalCount", currentProposalCount);
     expect(currentProposalCount).to.eq(10);
-
 
     // make the proposal
     await governorBravo.connect(a16zSigner).propose(targets, values, sigs, calldatas, description);
@@ -180,9 +185,22 @@ describe("Uni proposal simulation", async () => {
     console.log(proposalInfo); //expect "executed"
 
     // check ens records are correctly updated
-    licenseText = await ensPublicResolver.text(NODE, KEY)
-    expect(licenseText).to.eq(VALUE)
+    licenseText = await ensPublicResolver.text(NODE, KEY);
+    console.log(licenseText);
+    expect(licenseText).to.eq(VALUE);
+
+    // check subrecord data
+    subnodeResolver = await ensRegistry.resolver(NODE);
+    console.log("subnodeResolver", subnodeResolver);
+
+    expect(subnodeResolver.toLowerCase()).to.eq(PUBLIC_ENS_RESOLVER_ADDRESS.toLowerCase());
+
+    let ttlOfSubnode = await ensRegistry.ttl(NODE)
+
+    expect(ttlOfSubnode).to.eq(TTL);
     
+    subnodeRecordExists = await ensRegistry.recordExists(NODE);
+    expect(subnodeRecordExists).to.eq(true);
 
   })
 })
