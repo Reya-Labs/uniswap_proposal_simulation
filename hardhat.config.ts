@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       forking: {
-        url: "https://eth-mainnet.alchemyapi.io/v2/pNmKK8pTXHVggw2X4XPAOOuL9SllmxdZ",
+        url: "https://eth-mainnet.alchemyapi.io/v2/<key>",
         blockNumber: 14269579
       }
     }

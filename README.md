@@ -14,6 +14,8 @@ cd uniswap_proposal_simulation
 npm install
 ```
 
+Additionally, since the simulation is done on top of the Ethereum Mainnet fork, we need to connect with the Alchemy api to get access to their archive node. This is done by updating the network url in https://github.com/Voltz-Protocol/uniswap_proposal_simulation/blob/main/hardhat.config.ts to the one provided by Alchemy.
+
 ## Run the Simulation
 ```
 npx hardhat test
